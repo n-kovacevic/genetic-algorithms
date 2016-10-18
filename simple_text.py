@@ -6,7 +6,7 @@ and then evolving best generations until finding desired text.
 
 import random
 
-text = "Nikola"
+text = "The quick brown fox jumps over the lazy dog"
 population = 1000
 mutation = 0.01
 current = []  # [(fitness, char array)]
@@ -106,19 +106,6 @@ def random_character():
     Creates random character (A-Z, a-z and space)
     :return: random character
     """
-    """
-    Old algorithm
-
-    sign = random.randint(1, 55)
-    character = chr(32)
-    if sign > 30:
-        character = chr(random.randint(65, 90))
-    elif sign > 5:
-        character = chr(random.randint(97, 122))
-    else:
-        pass
-    return character
-    """
     sign = random.randint(61, 122)
     if sign == 61:
         sign = 32
@@ -150,7 +137,7 @@ def fitness(element):
     for i in range(n):
         if element[i] == text[i]:
             counter += 1
-    return int((counter/n)*100)
+    return int(pow((counter/n), 2)*100)
 
 
 def calculate_fitness():
