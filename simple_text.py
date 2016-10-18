@@ -61,9 +61,9 @@ def mutate(starting):
     :param starting: Element on which to apply mutation
     :return: Mutated element
     """
-    if random.random() <= mutation:
-        char = random.randint(1, len(text)) - 1
-        starting[char] = random_character()
+    for i in range(len(text)):
+        if random.random() <= mutation:
+            starting[i] = random_character()
     return starting
 
 
@@ -92,11 +92,10 @@ def loop():
     global current
     count = 0
     while True:
-        print(str(count)+", ", end="")
         calculate_fitness()
         evolve()
         best = str().join(max(current)[1])
-        print(best)
+        print(count, ":", best)
         if best == text:
             return
         count += 1
@@ -107,6 +106,9 @@ def random_character():
     Creates random character (A-Z, a-z and space)
     :return: random character
     """
+    """
+    Old algorithm
+
     sign = random.randint(1, 55)
     character = chr(32)
     if sign > 30:
@@ -116,6 +118,13 @@ def random_character():
     else:
         pass
     return character
+    """
+    sign = random.randint(61, 122)
+    if sign == 61:
+        sign = 32
+    elif sign == 62:
+        sign = 46
+    return chr(sign)
 
 
 def init():
