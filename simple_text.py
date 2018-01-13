@@ -1,13 +1,13 @@
 """
-Genetic algorithm for generating desired using randomly generated strings of lowercase, uppercase and space character.
+Genetic algorithm for generating desired text using randomly generated strings of lowercase, uppercase and space character.
 Program works by generating population of random words length of the text,
 and then evolving best generations until finding desired text.
 """
 
 import random
 
-text = "The quick brown fox jumps over the lazy dog"
-population = 200
+text = "Simple Text Algorithm"
+population = 100
 mutation = .01
 current = []  # [(fitness, char array)]
 
@@ -42,8 +42,7 @@ def crossover(parent1, parent2):
     :return: Child of two parents
     """
     midpoint = int(len(text)/2)
-    child = parent1[:midpoint] + parent2[midpoint:]
-    return child
+    return parent1[:midpoint] + parent2[midpoint:]
 
 
 def mutate(starting):
@@ -70,7 +69,7 @@ def evolve():
         first, second = select(pool)
         result = crossover(first, second)
         result = mutate(result)
-        new_population.append([i, result])
+        new_population.append([fitness(result), result])
 
     current = new_population
 
@@ -83,9 +82,9 @@ def loop():
     global current
     count = 0
     while True:
-        calculate_fitness()
+
         best = max(current)
-        print('{} : {} : {}'.format(count, ''.join(best[1]), best[0]))
+        print('\r{:7d} : {} : {:3d}%'.format(count, ''.join(best[1]), best[0]), end='')
         if best[0] == 100:
             return
         evolve()
@@ -114,10 +113,10 @@ def init():
     global current
     current = []
     for i in range(population):
-        element = (i, [])
+        unit = []
         for j in range(len(text)):
-            element[1].append(random_character())
-        current.append(element)
+            unit.append(random_character())
+        current.append((fitness(unit), unit))
 
 
 def fitness(element):
@@ -134,16 +133,7 @@ def fitness(element):
     return int(pow((counter/n), 2)*100)
 
 
-def calculate_fitness():
-    """
-    Calculates fitness for each of the elements in current population
-    """
-    global current
-    for i in range(population):
-        current[i] = (fitness(current[i][1]), current[i][1])
-
-
 if __name__ == '__main__':
     init()
-    calculate_fitness()
     loop()
+    print('\nFinished')
