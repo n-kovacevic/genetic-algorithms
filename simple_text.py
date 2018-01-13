@@ -7,28 +7,19 @@ and then evolving best generations until finding desired text.
 import random
 
 text = "The quick brown fox jumps over the lazy dog"
-population = 1000
-mutation = 0.01
+population = 200
+mutation = .01
 current = []  # [(fitness, char array)]
-
-
-def main():
-    """
-    Main Function
-    """
-    init()
-    calculate_fitness()
-    loop()
 
 
 def create_selection_pool():
     """
     Creates selection pool based on fitness of the elements
     """
-    selection_pool = []
+    selection_pool = current[:]
     for i in current:
         for j in range(i[0]):
-            selection_pool.append(i[1])
+            selection_pool.append(i)
     return selection_pool
 
 
@@ -38,8 +29,8 @@ def select(selection_pool):
     :param selection_pool: Pool from which to select elements
     :return: Two selected elements
     """
-    first = selection_pool[random.randint(0, len(selection_pool)-1)]
-    second = selection_pool[random.randint(0, len(selection_pool)-1)]
+    first = selection_pool[random.randint(0, len(selection_pool)-1)][1]
+    second = selection_pool[random.randint(0, len(selection_pool)-1)][1]
     return first, second
 
 
@@ -61,7 +52,7 @@ def mutate(starting):
     :param starting: Element on which to apply mutation
     :return: Mutated element
     """
-    for i in range(len(text)):
+    for i in range(len(starting)):
         if random.random() <= mutation:
             starting[i] = random_character()
     return starting
@@ -93,24 +84,26 @@ def loop():
     count = 0
     while True:
         calculate_fitness()
-        evolve()
-        best = str().join(max(current)[1])
-        print(count, ":", best)
-        if best == text:
+        best = max(current)
+        print('{} : {} : {}'.format(count, ''.join(best[1]), best[0]))
+        if best[0] == 100:
             return
+        evolve()
         count += 1
 
 
 def random_character():
     """
-    Creates random character (A-Z, a-z and space)
+    Creates random character (A-Z, a-z, 0-9 and space)
     :return: random character
     """
-    sign = random.randint(61, 122)
+    sign = random.randint(61, 132)
     if sign == 61:
         sign = 32
     elif sign == 62:
         sign = 46
+    elif sign > 122:
+        sign -= 75
     return chr(sign)
 
 
@@ -119,8 +112,9 @@ def init():
     Initializes starting population
     """
     global current
+    current = []
     for i in range(population):
-        element = [i, []]
+        element = (i, [])
         for j in range(len(text)):
             element[1].append(random_character())
         current.append(element)
@@ -146,6 +140,10 @@ def calculate_fitness():
     """
     global current
     for i in range(population):
-        current[i][0] = fitness(current[i][1])
+        current[i] = (fitness(current[i][1]), current[i][1])
 
-main()
+
+if __name__ == '__main__':
+    init()
+    calculate_fitness()
+    loop()
